@@ -28,11 +28,9 @@ const PlaceOrder = () => {
   const placeOrder = async (event) =>{
     event.preventDefault();
     let orderItems = [];
-    food_list.map((item, index)=>{
+    food_list.forEach((item)=>{
       if(cartItems[item._id]>0){
-        let itemInfo = item;
-        itemInfo["quantity"] = cartItems[item._id];
-        orderItems.push(itemInfo);
+        orderItems.push({ ...item, quantity: cartItems[item._id] });
       }
     })
     let orderData = {
@@ -41,13 +39,15 @@ const PlaceOrder = () => {
       amount:getTotalCartAmount()+2,
     }
 
-    let response = await axios.post(url+'/api/order/place', orderData,{headers:{token}})
-    if(response.data.success){
-      const {session_url} = response.data;
-      window.location.replace(session_url);
-    }
-    else{
-      alert('Error')
+    try {
+      const response = await axios.post(url+'/api/order/place', orderData,{headers:{token}})
+      if(response.data.success){
+        window.location.replace(response.data.session_url);
+      } else {
+        alert(response.data.message || 'Unable to place the order.');
+      }
+    } catch {
+      alert('Unable to place the order. Please try again.');
     }
   }
 
@@ -59,7 +59,7 @@ const PlaceOrder = () => {
     }else if(getTotalCartAmount()===0){
       navigate('/cart')
     }
-  },[token])
+  },[token, cartItems, food_list])
 
   return (
     <form onSubmit={placeOrder} className='place-order'>

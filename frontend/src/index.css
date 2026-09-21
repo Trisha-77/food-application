@@ -9,6 +9,7 @@
 
 body{
   min-height: 100vh;
+  background:#fbfdfb;
 }
 
 a{
@@ -17,7 +18,7 @@ a{
 }
 
 .app{
-  width: 80%;
+  width: min(1120px, 90%);
   margin: auto;
 }
 
@@ -29,3 +30,6 @@ a{
     opacity: 1;
   }
 }
+
+.route-loading { min-height: 100vh; display: grid; place-items: center; color: #344054; font-weight: 600; }
+button,input,select{font:inherit}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e48a3780;outline-offset:2px}

@@ -1,0 +1,10 @@
+import { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import './Login.css';
+
+export default function Login({ url, login }) {
+  const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [loading, setLoading] = useState(false); const [showPassword, setShowPassword] = useState(false);
+  const submit = async (event) => { event.preventDefault(); if (!/^\S+@\S+\.\S+$/.test(email) || !password) return toast.error('Enter a valid email and password.'); setLoading(true); try { const {data} = await axios.post(`${url}/api/user/admin/login`, {email, password}); if (!data.success) throw new Error(data.message); login({token:data.token, user:data.user}); toast.success('Welcome back.'); } catch (error) { toast.error(error.response?.data?.message || error.message || 'Unable to sign in.'); } finally { setLoading(false); } };
+  return <main className="admin-login"><section className="login-intro"><div className="login-brand"><span>S</span><b>Savoury</b></div><div><p>OPERATIONS, SIMPLIFIED</p><h1>Run a better<br/><em>food service.</em></h1><small>Manage your menu, orders, and customer operations from one focused workspace.</small></div><footer>© {new Date().getFullYear()} Savoury</footer></section><section className="login-form-wrap"><form className="login-card" onSubmit={submit}><p className="eyebrow">ADMIN ACCESS</p><h2>Welcome back</h2><p className="login-copy">Sign in with an administrator account to continue.</p><label>Email<input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} autoComplete="email" /></label><label>Password<div className="password-field"><input type={showPassword?'text':'password'} value={password} onChange={(e)=>setPassword(e.target.value)} autoComplete="current-password"/><button type="button" onClick={()=>setShowPassword(!showPassword)}>{showPassword?'Hide':'Show'}</button></div></label><button className="primary-btn login-submit" disabled={loading}>{loading?'Signing in…':'Sign in'}</button></form></section></main>;
+}

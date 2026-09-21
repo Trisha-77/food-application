@@ -1,41 +1,34 @@
 import React from 'react'
 import './Footer.css'
-import { assets } from '../../assets/assets'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
   return (
     <div className='footer' id='footer'>
         <div className="footer-content">
             <div className="footer-content-left">
-                <img src={assets.logo} alt="" />
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsum in, beatae dolorem non optio cupiditate, quam sunt dicta dolores minima exercitationem ducimus totam aut asperiores inventore harum laudantium. Distinctio, libero.</p>
-                <div className="footer-social-icons">
-                    <img src={assets.facebook_icon} alt="" />
-                    <img src={assets.twitter_icon} alt="" />
-                    <img src={assets.linkedin_icon} alt="" />
-                </div>
+                <Link className="footer-brand" to="/home"><span>●</span> Savoury</Link>
+                <p>Thoughtful food ordering for the meals you are looking forward to.</p>
             </div>
             <div className="footer-content-center">
-                <h2>COMPANY</h2>
+                <h2>EXPLORE</h2>
                 <ul>
-                    <li>Home</li>
-                    <li>About us</li>
-                    <li>Delivery</li>
-                    <li>Privacy Policy</li>
+                    <li><Link to="/home">Home</Link></li>
+                    <li><Link to="/menu">Menu</Link></li>
+                    <li><Link to="/orders">Orders</Link></li>
                 </ul>
             </div>
             <div className="footer-content-right">
-                <h2>GET IN TOUCH</h2>
+                <h2>INFORMATION</h2>
                 <ul>
-                    <li>+94 765489545</li>
-                    <li>dulanjalisenarathna93@gmail.com</li>
+                    <li>About</li><li>Contact</li><li>Privacy</li><li>Terms</li>
                 </ul>
             </div>
            
         </div>
         <hr />
         <p className="footer-copyright">
-            Copyright 2024 &copy; Dulanjali - All Right Reserved.
+            © {new Date().getFullYear()} Savoury. All rights reserved.
         </p>
     </div>
   )

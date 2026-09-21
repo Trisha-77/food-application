@@ -6,25 +6,29 @@ import axios from 'axios';
 
 const Verify = () => {
 
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const success = searchParams.get("success")
     const orderId = searchParams.get("orderId")
+    const sessionId = searchParams.get("session_id")
     const {url} = useContext(StoreContext);
     const navigate = useNavigate();
 
     const verifyPayment = async () =>{
-        const response = await axios.post(url+"/api/order/verify",{success, orderId});
-        if(response.data.success){
-            navigate('/myorders');
+        if (!success || !orderId || (success === 'true' && !sessionId)) {
+            navigate('/');
+            return;
         }
-        else{
-            navigate('/')
+        try {
+            const response = await axios.post(url+"/api/order/verify",{success, orderId, sessionId});
+            navigate(response.data.success ? '/myorders' : '/');
+        } catch {
+            navigate('/');
         }
     }
 
     useEffect(()=>{
         verifyPayment();
-    },[])
+    },[success, orderId, sessionId, url, navigate])
    
   return (
     <div className='verify'>

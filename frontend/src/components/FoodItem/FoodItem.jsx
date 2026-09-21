@@ -1,50 +1,38 @@
-import React, { useContext } from "react";
-import { assets } from "../../assets/assets";
+import React, { useContext, useState } from "react";
 import "./FoodItem.css";
 import { StoreContext } from '../context/StoreContext';
 
-const FoodItem = ({ id, name, price, description, image }) => {
-  const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
+const FoodItem = ({ _id, id, name, price, description, image, category }) => {
+  const itemId = id || _id;
+  const { cartItems, addToCart, removeFromCart, url } = useContext(StoreContext);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   return (
-    <div className="food-item">
+    <article className="food-item">
       <div className="food-item-img-container">
-        <img src={image} className="food-item-image" alt="" />
+        <img src={`${url}/images/${image}`} className="food-item-image" alt={name} />
 
-        {!cartItems[id] ? (    //changes made 
-          <img
-            className="add"
-            src={assets.add_icon_white}
-            onClick={() => addToCart(id)}
-            alt=""
-          />
+        {!cartItems[itemId] ? (
+          <button className="add" onClick={() => addToCart(itemId)}>Add to Cart</button>
         ) : (
           <div className="food-item-counter">
-            <img
-              onClick={() => removeFromCart(id)}
-              src={assets.remove_icon_red}
-              alt=""
-            />
-            <p>{cartItems[id]}</p>
-            <img
-              onClick={() => addToCart(id)}
-              src={assets.add_icon_green}
-              alt=""
-            />
+            <button onClick={() => removeFromCart(itemId)} aria-label={`Remove one ${name}`}>−</button>
+            <span>{cartItems[itemId]}</span>
+            <button onClick={() => addToCart(itemId)} aria-label={`Add one ${name}`}>+</button>
           </div>
         )}
       </div>
       <div className="food-item-info">
         <div className="food-item-name-rating">
           <p>{name}</p>
-          <div className="star">
-            <img src={assets.rating_starts}  alt="" /> 
-          </div>
+          <span className="food-category">{category}</span>
         </div>
         <p className="food-item-desc">{description}</p>
-        <p className="food-item-price">${price}</p>
+        <p className="food-item-price">${Number(price).toFixed(2)}</p>
+        <button className="details-button" onClick={() => setDetailsOpen(true)}>View details</button>
       </div>
-    </div>
+      {detailsOpen && <div className="food-dialog-backdrop" role="presentation" onClick={() => setDetailsOpen(false)}><section className="food-dialog" role="dialog" aria-modal="true" aria-labelledby={`food-title-${itemId}`} onClick={(event) => event.stopPropagation()}><button className="dialog-close" onClick={() => setDetailsOpen(false)} aria-label="Close food details">×</button><img src={`${url}/images/${image}`} alt={name} /><div><p className="food-category">{category}</p><h2 id={`food-title-${itemId}`}>{name}</h2><p>{description}</p><strong>${Number(price).toFixed(2)}</strong>{!cartItems[itemId] ? <button className="dialog-add" onClick={() => addToCart(itemId)}>Add to Cart</button> : <div className="dialog-quantity"><button onClick={() => removeFromCart(itemId)} aria-label={`Remove one ${name}`}>−</button><span>{cartItems[itemId]}</span><button onClick={() => addToCart(itemId)} aria-label={`Add one ${name}`}>+</button></div>}</div></section></div>}
+    </article>
   );
 };
 

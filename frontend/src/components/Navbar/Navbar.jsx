@@ -1,50 +1,51 @@
 import React, { useContext, useState } from 'react'
 import './Navbar.css'
 import { assets } from './../../assets/assets';
-import {Link, useNavigate} from 'react-router-dom'
+import {Link, NavLink, useNavigate} from 'react-router-dom'
 import { StoreContext } from './../context/StoreContext';
 
-const Navbar = ({setShowLogin}) => {
+const Navbar = () => {
 
-  const [menu, setMenu] = useState('home');
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const {getTotalCartAmount, token, setToken} = useContext(StoreContext);
+  const {getCartItemCount, token, user, logout: clearSession} = useContext(StoreContext);
 
   const navigate = useNavigate();
 
-  const logout = () =>{
-    localStorage.removeItem("token");
-    setToken("");
+  const handleLogout = () =>{
+    clearSession();
     navigate("/")
   }
 
   return (
-    <div className='navbar'>
-       <Link to='/'> <img src={assets.logo} alt="" className='logo' /></Link>
-        <ul className="navbar-menu">
-            <Link to='/' onClick={()=> setMenu('home')} className={menu === 'home'?'active':''}>home</Link>
-            <a href='#explore-menu' onClick={()=> setMenu('menu')} className={menu === 'menu'?'active':''}>menu</a>
-            <a href='#app-download' onClick={()=> setMenu('mobile-app')} className={menu === 'mobile-app'?'active':''}>mobile-app</a>
-            <a href='#footer' onClick={()=> setMenu('contact-us')} className={menu === 'contact-us'?'active':''}>contact us</a>
-        </ul>
+    <header className='navbar'>
+       <Link to='/home' className='brand'><span>●</span> Savoury</Link>
+       <button className="menu-toggle" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation" aria-expanded={mobileOpen}>☰</button>
+        <nav className={`navbar-menu ${mobileOpen ? 'open' : ''}`} aria-label="Primary navigation">
+            <NavLink to='/home' onClick={() => setMobileOpen(false)}>Home</NavLink>
+            <NavLink to='/menu' onClick={() => setMobileOpen(false)}>Menu</NavLink>
+            {token && <NavLink to='/orders' onClick={() => setMobileOpen(false)}>Orders</NavLink>}
+        </nav>
         <div className="navbar-right">
-            <img src={assets.search_icon} alt="" />
             <div className="navbar-search-icon">
-                <Link to='/cart'><img src={assets.basket_icon} alt="" /></Link>
-                <div className={getTotalCartAmount()===0?'':'dot'}></div>
+                <Link to='/menu' className="nav-icon" aria-label="Search menu">⌕</Link>
             </div>
-            {!token?<button onClick={()=> setShowLogin(true)}>sign in</button>
+            <div className="navbar-search-icon">
+                <Link to='/cart' className="nav-icon cart-link" aria-label={`Cart with ${getCartItemCount()} items`}>🛒<span>{getCartItemCount()}</span></Link>
+            </div>
+            {!token?<div className="auth-links"><button onClick={()=> navigate('/login')}>Login</button><Link to="/signup">Sign Up</Link></div>
             :<div className='navbar-profile'>
-              <img src={assets.profile_icon} alt="" />
+              <button className="profile-button" aria-label="Open profile menu">{user?.name?.charAt(0)?.toUpperCase() || 'U'}</button>
               <ul className="nav-profile-dropdown">
-                <li onClick={()=> navigate('/myorders')}><img src={assets.bag_icon} alt="" /><p>Orders</p></li>
+                <li onClick={()=> navigate('/profile')}><span>Profile</span><p>{user?.name || 'Account'}</p></li>
+                <li onClick={()=> navigate('/orders')}><img src={assets.bag_icon} alt="" /><p>Orders</p></li>
                 <hr />  
-                <li onClick={logout}><img src={assets.logout_icon} alt="" /><p>Logout</p></li>
+                <li onClick={handleLogout}><img src={assets.logout_icon} alt="" /><p>Logout</p></li>
               </ul>
             </div>
             }
               </div>
-    </div>
+    </header>
   )
 }
 

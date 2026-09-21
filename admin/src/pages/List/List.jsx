@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './List.css'
 import axios from 'axios'
 import { toast } from 'react-toastify';
@@ -53,9 +53,9 @@ const List = ({url}) => {
             <b>Price</b>
             <b>Action</b>
         </div>
-        {list.map((item,index)=>{
+        {list.map((item)=>{
           return(
-            <div key={index} className="list-table-format">
+            <div key={item._id} className="list-table-format">
               <img src={`${url}/images/`+item.image} alt="" />
               <p>{item.name}</p>
               <p>{item.category}</p>
